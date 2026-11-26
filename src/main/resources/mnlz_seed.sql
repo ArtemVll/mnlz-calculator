@@ -40,11 +40,12 @@ INSERT INTO steel_grades (name, carbon, lambda, a_coef, m_coef) VALUES
     ('65Г', 0.65, 28.0, 953.0, 0.333333),
     ('У8', 0.8, 28.0, 953.0, 0.333333),
     ('У10', 1.0, 28.0, 953.0, 0.333333),
-    ('ШХ15', 1.0, 28.0, 953.0, 0.333333);
-
+    ('ШХ15', 1.0, 28.0, 953.0, 0.333333),
+    ('Сталь 70', 0.70, 28.0, 953.0, 0.333333),
+    ('18ЮА', 0.04, 27.0, 953.0, 0.333333);
 
 INSERT INTO equipment (name, machine_type, radius_m, streams, ladle_capacity_t) VALUES
-    ('МНЛЗ-1 слябовая (Константин)', 'Слябовая', 8.4, 1, 140),
+    ('МНЛЗ-1 слябовая (учебная)', 'Слябовая', 8.4, 1, 140),
     ('МНЛЗ-2 слябовая (Константин)', 'Слябовая', 8.4, 1, 140),
     ('МНЛЗ-3 слябовая криволинейная', 'Слябовая', 10.0, 2, 300),
     ('МНЛЗ-4 радиальная', 'Радиальная', 9.0, 2, 200),
@@ -2706,4 +2707,8 @@ INSERT INTO calc_results (calculation_id, param_id, param_name, param_value) VAL
     (120, 11, 'water_flow', 113.003),
     (120, 12, 'specific_water', 2.005);
 
-UPDATE users SET password_hash = '0cd75b8f4633c170fdc04f7208f97825e132522ef48909fc22d6e9452739b73d', salt = 'a1b2c3d4e5f60718';
+-- Единый стартовый пароль start123 для всех учётных записей
+UPDATE users SET password_hash = '87d01ed244feccdaea678506dbb594437df72a7e816b74d640e355e829ab9b78'    WHERE username = 'admin';
+UPDATE users SET password_hash = '1b00deadd49aad37f840fefea5aaef99380b7c90316b9c2d70820687843ea39b'   WHERE username = 'petrov';
+UPDATE users SET password_hash = '40c4bd71abc1a9581916a68e002315970737b1a88ebf241c1e463704a195f972' WHERE username = 'sidorova';
+UPDATE users SET password_hash = '467c985a01af47750f6db27145fe160a7665d34b6bb56b844ee2e57527717f2a'    WHERE username = 'guest';
