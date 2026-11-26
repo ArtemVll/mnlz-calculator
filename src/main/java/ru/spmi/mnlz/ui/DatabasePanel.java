@@ -7,6 +7,7 @@ import ru.spmi.mnlz.db.EquipmentDao;
 import ru.spmi.mnlz.db.HistoryEntry;
 import ru.spmi.mnlz.db.Machine;
 import ru.spmi.mnlz.db.SteelGradeDao;
+import ru.spmi.mnlz.export.ExcelExporter;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -35,6 +36,8 @@ public final class DatabasePanel extends JPanel {
     private final JTextField filterWidth = new JTextField(5);
     private final JTextField filterThickness = new JTextField(5);
     private final JButton deleteButton = new JButton("Удалить запись");
+    private final JButton exportButton = new JButton("Экспорт в Excel");
+
 
     // --- Оборудование
     private final DefaultTableModel equipModel = new DefaultTableModel(
@@ -70,6 +73,7 @@ public final class DatabasePanel extends JPanel {
         loadHistory(null, null);
         loadEquipment();
         loadGrades();
+        exportButton.addActionListener(e -> doExport());
     }
 
     private JPanel buildHistoryTab() {
@@ -99,6 +103,7 @@ public final class DatabasePanel extends JPanel {
         panel.add(detailScroll, BorderLayout.SOUTH);
 
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        bottom.add(exportButton);
         bottom.add(deleteButton);
         panel.add(bottom, BorderLayout.SOUTH);
 
@@ -248,4 +253,33 @@ public final class DatabasePanel extends JPanel {
             gradeModel.addRow(new Object[]{g.name(), g.carbonPercent(), g.crystallizationC()});
         }
     }
+
+    /** Сохранение текущей таблицы истории в файл Excel. */
+    private void doExport() {
+        if (historyModel.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Нет записей для экспорта");
+            return;
+        }
+        JFileChooser chooser = new JFileChooser();
+        chooser.setSelectedFile(new java.io.File("history.xlsx"));
+        if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return;
+        java.io.File file = chooser.getSelectedFile();
+        if (!file.getName().toLowerCase().endsWith(".xlsx")) {
+            file = new java.io.File(file.getParentFile(), file.getName() + ".xlsx");
+        }
+        try {
+            List<HistoryEntry> list = new ArrayList<>();
+            for (int i = 0; i < historyModel.getRowCount(); i++) {
+                int id = (int) historyModel.getValueAt(i, 0);
+                HistoryEntry h = historyById.get(id);
+                if (h != null) list.add(h);
+            }
+            ExcelExporter.exportHistory(file, list);
+            JOptionPane.showMessageDialog(this, "Сохранено: " + file.getAbsolutePath());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Ошибка экспорта: " + ex.getMessage());
+        }
+    }
+
 }
