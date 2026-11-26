@@ -16,7 +16,7 @@ public final class MainFrame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         JTabbedPane tabs = new JTabbedPane();
-        tabs.addTab("Расчёт МНЛЗ", placeholder("Форма расчёта МНЛЗ — следующий шаг"));
+        tabs.addTab("Расчёт МНЛЗ", new MnlzCalcPanel(session));
         tabs.addTab("Расчёт ЗВО", placeholder("Форма расчёта ЗВО — следующий шаг"));
         tabs.addTab("База данных", placeholder("История расчётов и справочники — следующий шаг"));
         tabs.addTab("Справка", placeholder("Справка по методике — следующий шаг"));
