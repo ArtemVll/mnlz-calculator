@@ -1,0 +1,36 @@
+package ru.spmi.mnlz.ui;
+
+import ru.spmi.mnlz.auth.AuthService;
+
+import javax.swing.*;
+import java.awt.*;
+
+/** Главное окно приложения: вкладки расчётов, базы и справки. */
+public final class MainFrame extends JFrame {
+
+    private final AuthService.Session session;
+
+    public MainFrame(AuthService.Session session) {
+        super("Калькулятор металлурга — " + session.username() + " [" + session.role() + "]");
+        this.session = session;
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        JTabbedPane tabs = new JTabbedPane();
+        tabs.addTab("Расчёт МНЛЗ", placeholder("Форма расчёта МНЛЗ — следующий шаг"));
+        tabs.addTab("Расчёт ЗВО", placeholder("Форма расчёта ЗВО — следующий шаг"));
+        tabs.addTab("База данных", placeholder("История расчётов и справочники — следующий шаг"));
+        tabs.addTab("Справка", placeholder("Справка по методике — следующий шаг"));
+        add(tabs);
+
+        setSize(900, 620);
+        setLocationRelativeTo(null);
+    }
+
+    private JPanel placeholder(String text) {
+        JPanel panel = new JPanel(new GridBagLayout());
+        JLabel label = new JLabel(text);
+        label.setForeground(Color.GRAY);
+        panel.add(label);
+        return panel;
+    }
+}

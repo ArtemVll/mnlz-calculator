@@ -61,9 +61,10 @@ public final class LoginFrame extends JFrame {
                 return;
             }
             // Успех: открываем главное окно, логин закрываем
-            JOptionPane.showMessageDialog(this,
-                    "Вход выполнен: " + session.username() + " (" + session.role() + ")");
-            dispose();
+            SwingUtilities.invokeLater(() -> {
+                new MainFrame(session).setVisible(true);
+                dispose();
+            });
         } catch (Exception ex) {
             ex.printStackTrace();
             messageLabel.setText("Ошибка: " + ex.getMessage());
