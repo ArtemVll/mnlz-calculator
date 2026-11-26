@@ -51,6 +51,7 @@ public final class Database {
                 );
                 CREATE TABLE IF NOT EXISTS calculations (
                     id INTEGER PRIMARY KEY,
+                    steel_name TEXT,
                     user_id INTEGER REFERENCES users(id),
                     carbon REAL, width_m REAL, thickness_m REAL,
                     speed_mpm REAL, cryst_len_m REAL, t_out_c REAL,

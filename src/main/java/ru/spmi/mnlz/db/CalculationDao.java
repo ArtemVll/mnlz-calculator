@@ -6,11 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** Одна запись истории: исходные данные и результаты одного расчёта. */
-record HistoryEntry(int id, String steel, double width, double thickness,
-                    double speed, String created,
-                    Map<String, Double> inputs, Map<String, Double> results) { }
-
 /** Доступ к истории расчётов (таблицы calculations / calc_inputs / calc_results). */
 public final class CalculationDao {
 
@@ -20,16 +15,14 @@ public final class CalculationDao {
         Connection c = Database.get();
         int id;
         try (PreparedStatement ps = c.prepareStatement(
-                "INSERT INTO calculations(user_id, carbon, width_m, thickness_m, speed_mpm, "
-                        + "cryst_len_m, t_out_c, created) VALUES (?,?,?,?,?,?,?, datetime('now','localtime'))",
+                "INSERT INTO calculations(user_id, steel_name, carbon, width_m, thickness_m, speed_mpm, "
+                        + "cryst_len_m, t_out_c, created) VALUES (?,?,NULL,?,?,?,NULL,NULL, datetime('now','localtime'))",
                 Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, userId);
-            ps.setObject(2, null);                       // carbon уточним по марке на этапе GUI
+            ps.setString(2, steel);
             ps.setDouble(3, width);
             ps.setDouble(4, thickness);
             ps.setDouble(5, speed);
-            ps.setObject(6, null);
-            ps.setObject(7, null);
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 keys.next();
@@ -58,19 +51,19 @@ public final class CalculationDao {
         }
     }
 
-    /** Последние N расчётов с результатами — для вкладки «База данных». */
+    /** Последние N расчётов — для вкладки «База данных». */
     public List<HistoryEntry> findRecent(int limit) throws SQLException {
         List<HistoryEntry> list = new ArrayList<>();
-        String sql = "SELECT id, width_m, thickness_m, speed_mpm, created FROM calculations "
+        String sql = "SELECT id, steel_name, width_m, thickness_m, speed_mpm, created FROM calculations "
                 + "ORDER BY id DESC LIMIT ?";
         try (PreparedStatement ps = Database.get().prepareStatement(sql)) {
             ps.setInt(1, limit);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     int id = rs.getInt("id");
-                    list.add(new HistoryEntry(id, "", rs.getDouble("width_m"),
-                            rs.getDouble("thickness_m"), rs.getDouble("speed_mpm"),
-                            rs.getString("created"),
+                    list.add(new HistoryEntry(id, orDash(rs.getString("steel_name")),
+                            rs.getDouble("width_m"), rs.getDouble("thickness_m"),
+                            rs.getDouble("speed_mpm"), rs.getString("created"),
                             loadParams("calc_inputs", id), loadParams("calc_results", id)));
                 }
             }
@@ -81,7 +74,7 @@ public final class CalculationDao {
     /** Фильтрация истории по сечению заготовки (операция «фильтрация»). */
     public List<HistoryEntry> filterBySection(double width, double thickness) throws SQLException {
         List<HistoryEntry> list = new ArrayList<>();
-        String sql = "SELECT id, width_m, thickness_m, speed_mpm, created FROM calculations "
+        String sql = "SELECT id, steel_name, width_m, thickness_m, speed_mpm, created FROM calculations "
                 + "WHERE width_m = ? AND thickness_m = ? ORDER BY id DESC";
         try (PreparedStatement ps = Database.get().prepareStatement(sql)) {
             ps.setDouble(1, width);
@@ -89,9 +82,9 @@ public final class CalculationDao {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     int id = rs.getInt("id");
-                    list.add(new HistoryEntry(id, "", rs.getDouble("width_m"),
-                            rs.getDouble("thickness_m"), rs.getDouble("speed_mpm"),
-                            rs.getString("created"),
+                    list.add(new HistoryEntry(id, orDash(rs.getString("steel_name")),
+                            rs.getDouble("width_m"), rs.getDouble("thickness_m"),
+                            rs.getDouble("speed_mpm"), rs.getString("created"),
                             loadParams("calc_inputs", id), loadParams("calc_results", id)));
                 }
             }
@@ -122,5 +115,9 @@ public final class CalculationDao {
             }
         }
         return map;
+    }
+
+    private static String orDash(String s) {
+        return (s == null || s.isBlank()) ? "—" : s;
     }
 }

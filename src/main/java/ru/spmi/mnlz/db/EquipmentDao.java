@@ -4,9 +4,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Одна строка витрины оборудования МНЛЗ. */
-record Machine(String name, String type, double radiusM, int streams, int ladleT) { }
-
 /** Доступ к витрине оборудования (таблица equipment). */
 public final class EquipmentDao {
 
