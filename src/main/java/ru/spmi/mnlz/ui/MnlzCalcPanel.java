@@ -23,10 +23,10 @@ public final class MnlzCalcPanel extends JPanel {
 
     private final Map<String, SteelGrade> gradesByName = new LinkedHashMap<>();
     private final JComboBox<String> gradeBox = new JComboBox<>();
-    private final JTextField chargeField    = new JTextField("120000", 10);
+    private final JTextField chargeField    = new JTextField("140000", 10);
     private final JTextField widthField     = new JTextField("1.3", 10);
     private final JTextField thicknessField = new JTextField("0.16", 10);
-    private final JTextField speedField     = new JTextField("1.2", 10);
+    private final JTextField speedField     = new JTextField("1.3", 10);
     private final JTextField cycleField     = new JTextField("45", 10);
     private final JComboBox<String> factorBox = new JComboBox<>(new String[]{"0,5", "1,0", "1,5", "2,0"});
     private final JComboBox<BilletType> typeBox = new JComboBox<>(BilletType.values());
@@ -173,7 +173,7 @@ public final class MnlzCalcPanel extends JPanel {
             results.put("Число ручьёв n", (double) lastResult.streams());
             results.put("Цикл разливки, мин", lastResult.castingCycleMin());
             results.put("Gр, т/мин", lastResult.massRateTpm());
-            results.put("Gз, кг/мин", lastResult.billetRateKgs());
+            results.put("Gз, кг/с", lastResult.billetRateKgs());
             results.put("Lл, м", lastResult.liquidPoolM());
             results.put("Lл проверка, м", lastResult.liquidPoolCheckM());
             results.put("R, м", lastResult.radiusM());
