@@ -19,7 +19,7 @@ public final class MainFrame extends JFrame {
         tabs.addTab("Расчёт МНЛЗ", new MnlzCalcPanel(session));
         tabs.addTab("Расчёт ЗВО", new ZvoCalcPanel(session));
         tabs.addTab("База данных", new DatabasePanel(session));
-        tabs.addTab("Справка", placeholder("Справка по методике — следующий шаг"));
+        tabs.addTab("Справка", new HelpPanel());
         add(tabs);
 
         setSize(900, 620);
