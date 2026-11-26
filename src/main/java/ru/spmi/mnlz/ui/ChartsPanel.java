@@ -23,7 +23,7 @@ public final class ChartsPanel extends JPanel {
     private final JTextField widthField     = new JTextField("1.3", 8);
     private final JTextField thicknessField = new JTextField("0.16", 8);
     private final JTextField cycleField     = new JTextField("45", 8);
-    private final JComboBox<String> factorBox = new JComboBox<>(new String[]{"0,5", "1,0", "2,0"});
+    private final JComboBox<String> factorBox = new JComboBox<>(new String[]{"0,5", "1,0", "1,5", "2,0"});
     private final JComboBox<BilletType> typeBox = new JComboBox<>(BilletType.values());
 
     private static final String[] CHART_TYPES = {

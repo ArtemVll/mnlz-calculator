@@ -23,9 +23,18 @@ public final class ZvoCalculator {
         // (8.3) производительность МНЛЗ, кг/с: Gз = B·b·ρ·v/60
         double gRate = MnlzCalculator.DENSITY * in.widthM() * in.thicknessM() * in.castingSpeedMpm() / 60.0;
 
-        // (10.4) теплосодержание заготовки при входе в ЗВО
-        double halfT = CT * (tIn + tKr) / 2.0;
-        double iIn = halfT + (in.shellThicknessM() / (in.thicknessM() / 2.0)) * (DL + halfT);
+        // (10.4) теплосодержание заготовки при входе в ЗВО — сумма теплосодержаний
+        // твёрдой (корка δт) и жидкой (δж = b/2 − δт) частей.
+        // В печатной формуле опечатка: лишняя Ст во второй скобке;
+        // расчёт ведётся по формуле, которой решён пример 10.2:
+        // iн = Ст·(Тп'+Ткр)/2 · δт/(b/2) + (δж/(b/2))·(ΔL + (Тп'+Ткр)/2)
+        double avgT = (tIn + tKr) / 2.0;
+        double halfB = in.thicknessM() / 2.0;
+        double solidShare = in.shellThicknessM() / halfB;
+        double liquidShare = (halfB - in.shellThicknessM()) / halfB;
+        if (solidShare <= 0 || solidShare >= 1) throw new IllegalArgumentException(
+                "Толщина твёрдой корки должна быть в пределах от 0 до половины толщины заготовки");
+        double iIn = CT * avgT * solidShare + liquidShare * (DL + avgT);
 
         // (10.5) теплосодержание полностью затвердевшей заготовки
         double iOut = CT * (in.surfaceOutC() + tKr) / 2.0;
