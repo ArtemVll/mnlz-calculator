@@ -76,23 +76,41 @@ public final class Database {
              ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM users")) {
             if (rs.next() && rs.getInt(1) > 0) empty = false;
         }
+        System.out.println("Засев: users пустая? " + empty);
         if (!empty) return;
-        // mnlz_seed.sql лежит в src/main/resources и попадает в jar
+
+        String sql;
         try (InputStream in = Database.class.getResourceAsStream("/mnlz_seed.sql")) {
             if (in == null) throw new IllegalStateException("mnlz_seed.sql не найден в ресурсах");
-            String sql;
-            try {
-                sql = new String(in.readAllBytes(), StandardCharsets.UTF_8);
-            } catch (java.io.IOException e) {
-                throw new IllegalStateException("Не удалось прочитать mnlz_seed.sql", e);
-            }
-            try (Statement st = c.createStatement()) {
-                st.execute(sql);
-            }
+            sql = new String(in.readAllBytes(), StandardCharsets.UTF_8);
         } catch (java.io.IOException e) {
-            // сюда попадает закрытие потока — оборачиваем, чтобы не менять подпись метода
-            throw new IllegalStateException("Ошибка при чтении mnlz_seed.sql", e);
+            throw new IllegalStateException("Не удалось прочитать mnlz_seed.sql", e);
         }
+        System.out.println("Засев: прочитано " + sql.length() + " символов, "
+                + "INSERT INTO steel_grades встречается: " + countOccurrences(sql, "INSERT INTO steel_grades"));
+
+        try (Statement st = c.createStatement()) {
+            for (String fragment : sql.split(";")) {
+                String s = fragment.trim();
+                if (s.isEmpty()) continue;
+                try {
+                    st.execute(s);
+                } catch (SQLException e) {
+                    System.out.println("ОШИБКА ЗАСЕВА во фрагменте: "
+                            + s.substring(0, Math.min(60, s.length())).replace('\n', ' ') + "...");
+                    System.out.println("Причина: " + e.getMessage());
+                    throw e;
+                }
+            }
+        }
+        System.out.println("Засев выполнен полностью, без ошибок");
     }
+
+    private static int countOccurrences(String text, String needle) {
+        int count = 0, idx = 0;
+        while ((idx = text.indexOf(needle, idx)) != -1) { count++; idx += needle.length(); }
+        return count;
+    }
+
 
 }
