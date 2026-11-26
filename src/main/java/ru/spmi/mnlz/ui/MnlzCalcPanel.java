@@ -28,7 +28,7 @@ public final class MnlzCalcPanel extends JPanel {
     private final JTextField thicknessField = new JTextField("0.16", 10);
     private final JTextField speedField     = new JTextField("1.2", 10);
     private final JTextField cycleField     = new JTextField("45", 10);
-    private final JComboBox<String> factorBox = new JComboBox<>(new String[]{"0,5", "1,0", "2,0"});
+    private final JComboBox<String> factorBox = new JComboBox<>(new String[]{"0,5", "1,0", "1,5", "2,0"});
     private final JComboBox<BilletType> typeBox = new JComboBox<>(BilletType.values());
 
     private final JTextArea outputArea = new JTextArea();
@@ -148,7 +148,7 @@ public final class MnlzCalcPanel extends JPanel {
                 + "Число ручьёв n:                 " + r.streams() + System.lineSeparator()
                 + "Цикл разливки, мин:             " + fmt(r.castingCycleMin()) + System.lineSeparator()
                 + "Массовая скорость Gр, т/мин:    " + fmt(r.massRateTpm()) + System.lineSeparator()
-                + "Расход заготовки Gз, кг/мин:    " + fmt(r.billetRateKgm()) + System.lineSeparator()
+                + "Расход заготовки Gз, кг/с:    " + fmt(r.billetRateKgs()) + System.lineSeparator()
                 + "Глубина лунки Lл, м:            " + fmt(r.liquidPoolM()) + System.lineSeparator()
                 + "Глубина лунки (проверка), м:    " + fmt(r.liquidPoolCheckM()) + System.lineSeparator()
                 + "Радиус машины R = H, м:         " + fmt(r.radiusM()) + System.lineSeparator()
@@ -173,7 +173,7 @@ public final class MnlzCalcPanel extends JPanel {
             results.put("Число ручьёв n", (double) lastResult.streams());
             results.put("Цикл разливки, мин", lastResult.castingCycleMin());
             results.put("Gр, т/мин", lastResult.massRateTpm());
-            results.put("Gз, кг/мин", lastResult.billetRateKgm());
+            results.put("Gз, кг/мин", lastResult.billetRateKgs());
             results.put("Lл, м", lastResult.liquidPoolM());
             results.put("Lл проверка, м", lastResult.liquidPoolCheckM());
             results.put("R, м", lastResult.radiusM());

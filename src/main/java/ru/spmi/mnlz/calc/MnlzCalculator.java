@@ -32,8 +32,8 @@ public final class MnlzCalculator {
         // (8.1) массовая скорость разливки, т/мин
         double massRate = in.chargeKg() / (0.9 * n * castingCycle) / 1000.0;
 
-        // (8.3) массовая скорость выхода заготовки, кг/мин
-        double billetRate = in.widthM() * in.thicknessM() * DENSITY * in.castingSpeedMpm();
+        // (8.3) массовая скорость выхода заготовки, кг/с: Gз = B·b·ρ·v/60
+        double billetRate = in.widthM() * in.thicknessM() * DENSITY * in.castingSpeedMpm() / 60.0;
 
         // (8.5) глубина лунки жидкой фазы и проверка по (8.4)
         double pool = in.type().kSolidification * in.thicknessM() * in.chargeKg()
